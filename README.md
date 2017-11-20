@@ -1,24 +1,28 @@
 Queue-it
 ========
 
-Queue-it is an online queue system designed to manage website overload during extreme end-user peaks. It offers an API for programmatic access to configuring and controlling the queue.
+Queue-it is an online queue system designed to manage website overload during extreme end-user peaks.
+It offers an API for programmatic access to configuring and controlling the queue.
 
 About module
 ============
 
-This module is unofficial implementation of [Queue-it Framework](https://queue-it.com/) for Drupal CMS. You need to have existing Queue-it account in order to use it.
+This module is unofficial implementation of [Queue-it Framework](https://queue-it.com/) for Drupal CMS.
+You need to have existing Queue-it account in order to use it.
 
 Authentication
 ==============
 
-In order to authenticate and authorize the `Api-Key`, HTTP header must be supplied in the REST request. The key can be found in the [GO Queue-it Platform](https://go.queue-it.net/account/security).
+In order to authenticate and authorize the `Api-Key`, HTTP header must be supplied in the REST request.
+The key can be found in the [GO Queue-it Platform](https://go.queue-it.net/account/security).
 
 This API Key should be specified in the settings page of the module at `admin/config/services/queueit`.
 
 Dependencies
 ============
 
-The module depends on [Known User Implementation for PHP](https://github.com/queueit/KnownUser.V3.PHP) hosted at GitHub repository.
+The module depends on [Known User Implementation for PHP](https://github.com/queueit/KnownUser.V3.PHP)
+hosted at GitHub repository.
 
 With composer, setting up things is fairly easy.
 
@@ -37,8 +41,11 @@ By default, `composer_manager` will place all of the libraries at /sites/all/ven
 Inside of the vendor directory there is a bin directory and inside of it we can
 find the behat executable.
 
-Dependencies
-============
+KnownUser API
+=============
+
+You can use the Known user setting to test if a specific user has arrived at your site via the queue,
+or if the user has tried to bypass the queue. The KnownUser validation must only be done on page requests.
 
 Notes
 =====

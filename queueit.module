@@ -27,6 +27,12 @@ function queueit_help($path, $arg) {
 }
 
 /**
+ * Implements hook_init().
+ */
+function queueit_init() {
+}
+
+/**
  * Implements hook_menu().
  */
 function queueit_menu() {

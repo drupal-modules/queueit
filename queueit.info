@@ -5,3 +5,5 @@ core = 7.x
 files[] = tests/queueit.test
 configure = admin/config/services/queueit
 dependencies[] = composer_manager
+files[] = src/classes/QueueitBase.php
+files[] = src/classes/QueueitKnownUser.php
