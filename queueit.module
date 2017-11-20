@@ -11,18 +11,12 @@
 function queueit_help($path, $arg) {
   // Load help content from the README file.
   $content = file_get_contents(drupal_get_path('module', 'queueit') . '/README.md');
-  // Conver new lines into <br>.
-  $content = nl2br($content, FALSE);
-  // Format code.
-  $content = preg_replace( '/`(.*?)`/', '<code>\1</code>', $content);
-  // Convert links.
-  $content = preg_replace('/\[([^\[]+)\]\(([^\)]+)\)/', '<a href=\'\2\'>\1</a>', $content);
-  // Remove not needed characters.
-  $content = strtr($content, ['=' => '']);
+  $content .= file_get_contents(libraries_get_path('composer') . '/queueit/KnownUser.V3.PHP' . '/README.md');
+  module_load_include('inc', 'queueit');
   switch ($path) {
     // Main module help for the queueit module
     case 'admin/help#queueit':
-      return '<p>' . $content . '</p>';
+      return '<p>' . queueit_md2html($content) . '</p>';
   }
 }
 
