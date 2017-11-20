@@ -25,17 +25,32 @@ function queueit_settings_form($form, &$form_state) {
     '#description' => t('Specify ID of the queue to use.'),
     '#default_value' => variable_get('queueit_queue_domain'),
   );
-  $form['config']['queueit_cookie_validity_minute'] = array(
-    '#type' => 'integer',
-    '#title' => t('Validity of the Queue-it session cookie. Default is 10 minutes.'),
-    '#description' => t('Specify ID of the queue to use.'),
-    '#default_value' => variable_get('queueit_cookie_validity_minute'),
+  $form['config']['queueit_cookie_validity'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Validity of the Queue-it session cookie.'),
+    '#description' => t('Optional. Validity of the Queue-it session cookie. Default is 10 minutes.'),
+    '#default_value' => variable_get('queueit_cookie_validity'),
+    '#element_validate' => ['element_validate_integer_positive'],
   );
   $form['config']['queueit_extend_cookie_validity'] = array(
     '#type' => 'checkbox',
     '#title' => t('Extended validity of session cookie.'),
     '#description' => t('Should the Queue-it session cookie validity time be extended each time the validation runs? By default it is enabled.'),
     '#default_value' => variable_get('queueit_extend_cookie_validity', TRUE),
+  );
+  $form['config']['queueit_layout_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name of the queue ticket layout.'),
+    '#description' => t('Optional. E.g. "Default layout by Queue-it. Default is to take what is specified on the Event.'),
+    '#default_value' => variable_get('queueit_layout_name'),
+  );
+  $form['config']['queueit_culture_of_layout'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Culture of the queue ticket layout.'),
+    '#description' => t('Culture of the queue ticket layout in the format specified <a href="!url">here</a>.',
+      [ '!url' => 'https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx' ]
+      ),
+    '#default_value' => variable_get('queueit_culture_of_layout'),
   );
   $form['creds'] = array(
     '#title' => 'Queue-it Credentials',
