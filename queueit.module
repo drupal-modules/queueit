@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @file
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function queueit_help($path, $arg) {
+  switch ($path) {
+    // Main module help for the block module
+    case 'admin/help#block':
+      return '<p>' . t('Blocks are boxes of content rendered into an area, or region, of a web page. The default theme Bartik, for example, implements the regions "Sidebar first", "Sidebar second", "Featured", "Content", "Header", "Footer", etc., and a block may appear in any one of these areas. The <a href="@blocks">blocks administration page</a> provides a drag-and-drop interface for assigning a block to a region, and for controlling the order of blocks within regions.', array('@blocks' => url('admin/structure/block'))) . '</p>';
+
+    // Help for another path in the block module
+    case 'admin/structure/block':
+      return '<p>' . t('This page provides a drag-and-drop interface for assigning a block to a region, and for controlling the order of blocks within regions. Since not all themes implement the same regions, or display regions in the same way, blocks are positioned on a per-theme basis. Remember that your changes will not be saved until you click the <em>Save blocks</em> button at the bottom of the page.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function queueit_menu() {
+  $items = array();
+  $items['admin/config/services/queueit'] = array(
+    'title' => 'Queue-it settings',
+    'description' => 'Configure settings for Queue-it.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('queueit_settings_form'),
+    'access arguments' => array('administer queueit'),
+    'file' => 'queueit.admin.inc',
+  );
+
+  return $items;
+}
+
+/** 
+ * Implements hook_library().
+ */
+function queueit_library() {
+  // Register libraries available in the external directory.
+  $path = libraries_get_path('composer') . '/queueit/KnownUser.V3.PHP';
+  $libraries['queueit/KnownUser'] = array(
+    'title' => 'KnownUser.V3.PHP',
+    'version' => '3',
+  );    
+	return $libraries;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function queueit_permission() {
+  $permissions = array();
+  $permissions['administer'] = array(
+    'title' => t('TODO: enter permission title'),
+    'description' => t('TODO: enter permission description'),
+  );
+  $permissions['queueit'] = array(
+    'title' => t('TODO: enter permission title'),
+    'description' => t('TODO: enter permission description'),
+  );
+  $permissions['administer queueit'] = array(
+    'title' => t('TODO: enter permission title'),
+    'description' => t('TODO: enter permission description'),
+  );
+
+  return $permissions;
+}

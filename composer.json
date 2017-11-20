@@ -1,0 +1,30 @@
+{
+    "name": "queueit/KnownUser.V3.PHP",
+    "type": "library",
+    "description": "The Queue-it Security Framework is used to ensure that end users cannot bypass the queue by adding a server-side integration to your server.",
+    "homepage": "https://drupal.org/project/coder",
+    "support": {
+        "issues": "https://github.com/queueit/KnownUser.V3.PHP/issues",
+        "source": "https://github.com/queueit/KnownUser.V3.PHP"
+    },
+    "keywords": ["Queue-it", "framework"],
+    "license": "LGPL-3.0+",
+    "require": {
+        "queueit/KnownUser.V3.PHP": "dev-master",
+        "php": ">=5.2.0"
+    },
+		"repositories": [
+      {
+        "type": "package",
+        "package": {
+          "name": "queueit/KnownUser.V3.PHP",
+          "version": "dev-master",
+          "source": {
+            "type": "git",
+            "url": "https://github.com/queueit/KnownUser.V3.PHP.git",
+            "reference": "master"
+          }
+        }
+      }
+    ]
+}

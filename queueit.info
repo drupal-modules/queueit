@@ -1,0 +1,7 @@
+name = Queue-it
+description = Queue-it offers an API for programmatic access to configuring and controlling the queue.
+version = VERSION
+core = 7.x
+files[] = tests/queueit.test
+configure = admin/config/services/queueit
+dependencies[] = composer_manager

@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Module's installation file.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function queueit_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'runtime') {
+    $t = get_t();
+    $known_user_lib = drupal_get_library('queueit', 'queueit/KnownUser');
+    $exists = $known_user_lib;
+    $requirements['queueit'] = array(
+      'title' => $t('KnownUser.V3.PHP'),
+      'severity' => $exists ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+      'value' => t('%lib library %state.',
+        ['%lib' => 'KnownUser.V3.PHP',
+        '%state' => $exists ? 'installed' : 'not installed']),
+    );
+  }
+
+  return $requirements;
+}
+
