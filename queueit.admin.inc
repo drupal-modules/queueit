@@ -9,6 +9,7 @@
  * Form builder.
  */
 function queueit_settings_form($form, &$form_state) {
+  // Configuration parameters.
   $form['config'] = array(
     '#title' => 'Queue-it Configuration',
     '#type' => 'fieldset',
@@ -52,6 +53,14 @@ function queueit_settings_form($form, &$form_state) {
       ),
     '#default_value' => variable_get('queueit_culture_of_layout'),
   );
+	// Exclude Queue-it on specific pages.
+	$form['config']['queueit_exclude_pages'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Exclude Queue-it on specific pages.'),
+		'#default_value' => variable_get('queueit_exclude_pages', "admin/*\nsystem/ajax/*"),
+		'#description' => t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard."),
+	);
+  // Credentials.
   $form['creds'] = array(
     '#title' => 'Queue-it Credentials',
     '#type' => 'fieldset',

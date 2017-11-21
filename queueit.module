@@ -25,7 +25,19 @@ function queueit_help($path, $arg) {
  */
 function queueit_init() {
   if (user_access('bypass queueit')) {
-    //return;
+    return;
+  }
+  // Check for matching path to exclude.
+  $curr_path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
+  $exclude_paths = variable_get('queueit_exclude_pages', "admin/*\nsystem/ajax/*");
+  foreach (explode("\n", $exclude_paths) as $path) {
+    $page_match = drupal_match_path($curr_path, drupal_strtolower($path));
+    if ($curr_path != $_GET['q']) {
+      $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+    }
+    if ($page_match) {
+      return;
+    }
   }
 }
 
