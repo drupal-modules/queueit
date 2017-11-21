@@ -24,6 +24,9 @@ function queueit_help($path, $arg) {
  * Implements hook_init().
  */
 function queueit_init() {
+  if (user_access('bypass queueit')) {
+    //return;
+  }
 }
 
 /**
@@ -61,17 +64,13 @@ function queueit_library() {
  */
 function queueit_permission() {
   $permissions = array();
-  $permissions['administer'] = array(
-    'title' => t('TODO: enter permission title'),
-    'description' => t('TODO: enter permission description'),
-  );
-  $permissions['queueit'] = array(
-    'title' => t('TODO: enter permission title'),
-    'description' => t('TODO: enter permission description'),
+  $permissions['bypass queueit'] = array(
+    'title' => t('Bypass Queue-it'),
+    'description' => t('Exclude the queue system for the selected roles.'),
   );
   $permissions['administer queueit'] = array(
-    'title' => t('TODO: enter permission title'),
-    'description' => t('TODO: enter permission description'),
+    'title' => t('Administer Queue-it'),
+    'description' => t('Configure Queue-it settings and credentials. Warning: Give to trusted roles only.'),
   );
 
   return $permissions;
