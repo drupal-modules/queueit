@@ -1,5 +1,7 @@
 <?php
 
+use QueueIT\KnownUserV3\SDK\QueueEventConfig;
+
 /**
  * Base class implementing Queue-it framework.
  */
@@ -33,6 +35,17 @@ class QueueitBase {
     $this->cookieDomain = variable_get('queueit_queue_domain');
     $this->layoutName = variable_get('queueit_layout_name');
     $this->cultureLayout = variable_get('queueit_culture_of_layout');
+    $this->setEventConfig();
+  }
+
+  /**
+   * Validate config.
+   *
+   * @return bools
+   * Returns TRUE if config is valid (e.g. credentials aren't empty).
+   */
+  function validateConfig() {
+    return $this->getCustomerId();
   }
 
   /* Setters */
@@ -41,7 +54,7 @@ class QueueitBase {
    * Sets event config.
    */
   function setEventConfig() {
-		$eventConfig = new QueueIT\KnownUserV3\SDK\QueueEventConfig();
+		$eventConfig = new QueueEventConfig;
 
 		$eventConfig->eventId = ""; // ID of the queue to use.
 
@@ -70,10 +83,31 @@ class QueueitBase {
     // Default is to use what is specified on Event. E.g. "en-GB".
 		$eventConfig->culture = $this->cultureLayout;
 
-		$this->eventConfig = eventConfig;
+		$this->eventConfig = $eventConfig;
   }
 
   /* Getters */
+
+  /**
+   * Get integration config.
+   *
+   * @return string
+   * Returns plain JSON content.
+   */
+  function getIntegrationConfig() {
+    if (!$this->validateConfig()) {
+      return NULL;
+    }
+    $config = [];
+    $config['Version'] = "";
+    // @todo: Decide how we should load the `integrationconfig.json` file.
+    // @see: https://github.com/queueit/KnownUser.V3.PHP/issues/8
+    // The file is auto-generated on publishing the Queue-it configuration.
+    // After setting up integration configuration using Queue-it Go platform,
+    // the file can be downloaded at the following URL:
+    // - https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
+    return json_encode($config);
+  }
 
   /**
    * Get API Key.
