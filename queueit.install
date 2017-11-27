@@ -22,6 +22,16 @@ function queueit_requirements($phase) {
         ['%lib' => 'KnownUser.V3.PHP',
         '%state' => $exists ? 'installed' : 'not installed']),
     );
+    module_load_include('php', 'queueit', 'src/classes/QueueitBase');
+    if ($exists && class_exists('QueueitBase') && !((new QueueitBase)->validateConfig())) {
+      $requirements['queueit']['value'] .= '&nbsp;' . $t("But not configured correctly.");
+      $requirements['queueit']['severity'] = REQUIREMENT_WARNING;
+    } else {
+      $queueit = new QueueitBase;
+      $config = $queueit->getIntegrationConfig();
+      $requirements['queueit']['severity'] = $config ? REQUIREMENT_OK : REQUIREMENT_WARNING;
+      $requirements['queueit']['description'] = json_encode(json_decode($config), TRUE);
+    }
   }
 
   return $requirements;

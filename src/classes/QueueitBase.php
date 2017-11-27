@@ -7,17 +7,22 @@ use QueueIT\KnownUserV3\SDK\QueueEventConfig;
  */
 class QueueitBase {
 
+  // Protected variables.
   protected $apiKey;         // API Key.
   protected $customerID;     // Customer ID.
   protected $secretKey;      // Secret key.
   protected $eventConfig;    // Event config.
-  protected $arrConfig;      // Integration config.
+  protected $configJson;     // Integration config.
 	protected $queueDomain;    // Domain name of the queue.
 	protected $cookieValidity; // Session cookie validity time (in min).
 	protected $extCookieTime;  // Extended validity of session cookie (bool).
 	protected $cookieDomain;   // Cookie domain.
 	protected $layoutName;     // Name of the queue ticket layout.
 	protected $cultureLayout;  // Culture of the queue ticket layout.
+
+	// Constants.
+	const QI_API_DOMAIN = 'queue-it.net';
+	const QI_CONFIG_URI = '/status/integrationconfig';
 
   /**
    * Class constructor.
@@ -98,15 +103,15 @@ class QueueitBase {
     if (!$this->validateConfig()) {
       return NULL;
     }
-    $config = [];
-    $config['Version'] = "";
-    // @todo: Decide how we should load the `integrationconfig.json` file.
-    // @see: https://github.com/queueit/KnownUser.V3.PHP/issues/8
-    // The file is auto-generated on publishing the Queue-it configuration.
-    // After setting up integration configuration using Queue-it Go platform,
-    // the file can be downloaded at the following URL:
-    // - https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
-    return json_encode($config);
+    $config_url = sprintf("http://%s.%s%s/%s",
+        $this->getCustomerId(),
+        self::QI_API_DOMAIN,
+        self::QI_CONFIG_URI,
+        $this->getCustomerId()
+        );
+    // Get the auto-generated config file published on Queue-it Go platform.
+    // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
+    return file_get_contents($config_url);
   }
 
   /**
