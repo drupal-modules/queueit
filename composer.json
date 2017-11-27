@@ -10,21 +10,13 @@
     "keywords": ["Queue-it", "framework"],
     "license": "LGPL-3.0+",
     "require": {
-        "queueit/KnownUser.V3.PHP": "dev-master",
+        "queueit/knownuserv3": "dev-master",
         "php": ">=5.2.0"
     },
 		"repositories": [
       {
-        "type": "package",
-        "package": {
-          "name": "queueit/KnownUser.V3.PHP",
-          "version": "dev-master",
-          "source": {
-            "type": "git",
-            "url": "https://github.com/queueit/KnownUser.V3.PHP.git",
-            "reference": "master"
-          }
-        }
+        "type": "vcs",
+        "url": "https://github.com/queueit/KnownUser.V3.PHP"
       }
     ]
 }
