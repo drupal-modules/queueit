@@ -57,7 +57,7 @@ function queueit_settings_form($form, &$form_state) {
 	$form['config']['queueit_exclude_pages'] = array(
 		'#type' => 'textarea',
 		'#title' => t('Exclude Queue-it on specific pages.'),
-		'#default_value' => variable_get('queueit_exclude_pages', "admin/*\nsystem/ajax/*"),
+		'#default_value' => variable_get('queueit_exclude_pages', "admin\nadmin/*\nsystem/ajax/*"),
 		'#description' => t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard."),
 	);
   // Credentials.
@@ -76,12 +76,14 @@ function queueit_settings_form($form, &$form_state) {
     '#title' => t('Customer ID'),
     '#description' => t('Your Queue-it customer ID.'),
     '#default_value' => variable_get('queueit_customer_id'),
+    '#required' => TRUE,
   );
   $form['creds']['queueit_secret_key'] = array(
     '#type' => 'textfield',
     '#title' => t('Secret key'),
     '#description' => t('Your 72 char secret key as specified in Go Queue-it self-service platform.'),
     '#default_value' => variable_get('queueit_secret_key'),
+    '#required' => TRUE,
   );
 
   return system_settings_form($form);
