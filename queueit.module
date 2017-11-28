@@ -5,13 +5,15 @@
  * Queue-it main module file.
  */
 
+define('QUEUEIT_EXCLUDE',  "admin\nadmin/*\nsites/*\nsystem/ajax/*");
+
 /**
  * Implements hook_help().
  */
 function queueit_help($path, $arg) {
   // Load help content from the README file.
   $content = file_get_contents(drupal_get_path('module', 'queueit') . '/README.md');
-  $content .= file_get_contents(libraries_get_path('composer') . '/queueit/KnownUser.V3.PHP' . '/README.md');
+  $content .= file_get_contents(libraries_get_path('composer') . '/queueit/knownuserv3' . '/README.md');
   module_load_include('inc', 'queueit');
   switch ($path) {
     // Main module help for the queueit module
@@ -24,13 +26,21 @@ function queueit_help($path, $arg) {
  * Implements hook_init().
  */
 function queueit_init() {
-  if (user_access('bypass queueit')) {
+
+  // Check if user role is excluded from the Queue-it processing.
+  // If debug mode is enabled, ignore bypassing for debugging purposes.
+  if (user_access('bypass queueit') && !variable_get('queueit_debug', FALSE)) {
     return;
   }
-  // Check for matching path to exclude.
+
+  // The KnownUser validation must _only_ be done on page requests.
+  // So, if you add the KnownUser validation logic to a central place,
+  // then be sure that the Triggers only fire on page requests
+  // and not on e.g. image or ajax requests.
   $curr_path = drupal_strtolower(drupal_get_path_alias($_GET['q']));
-  $exclude_paths = variable_get('queueit_exclude_pages', "admin/*\nsystem/ajax/*");
+  $exclude_paths = variable_get('queueit_exclude_pages', QUEUEIT_EXCLUDE);
   foreach (explode("\n", $exclude_paths) as $path) {
+    // Check for matching page path to exclude.
     $page_match = drupal_match_path($curr_path, drupal_strtolower($path));
     if ($curr_path != $_GET['q']) {
       $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
@@ -38,6 +48,44 @@ function queueit_init() {
     if ($page_match) {
       return;
     }
+  }
+  $known_user = new QueueitKnownUser;
+  // Ignore processing if the config is invalid.
+  if (!$known_user->validateConfig()) {
+    return;
+  }
+  // Ignore processing for when in CLI mode.
+  if (variable_get('queueit_ignore_cli', TRUE) && drupal_is_cli()) {
+    return;
+  }
+  // Ignore processing for pages sent via POST.
+  if (variable_get('queueit_ignore_post', TRUE) && !empty($_POST)) {
+    return;
+  }
+  try {
+    switch (variable_get('queueit_mode', 'code')) {
+      case 'code':
+        $result = $known_user->validateRequestByIntegrationConfig();
+        break;
+      case 'integration':
+        $result = $known_user->resolveRequestByLocalEventConfig();
+        break;
+    }
+    if (!empty($result)
+      && variable_get('queueit_debug', FALSE)
+      && user_access('administer queueit')
+      ) {
+      // Displays response when in debug mode for admin users.
+      drupal_set_message(var_export($result, TRUE), 'status');
+    }
+    if (!user_access('bypass queueit') && $result->doRedirect()) {
+      // Send the user to the queue.
+      // Either because hash was missing or because it was invalid.
+      drupal_goto($result->redirectUrl, ['absolute' => TRUE]);
+    }
+  }
+  catch (\Exception $e) {
+    watchdog_exception('queueit', $e);
   }
 }
 
@@ -63,12 +111,12 @@ function queueit_menu() {
  */
 function queueit_library() {
   // Register libraries available in the external directory.
-  $path = libraries_get_path('composer') . '/queueit/KnownUser.V3.PHP';
+  $path = libraries_get_path('composer') . '/queueit/knownuserv3';
   $libraries['queueit/KnownUser'] = array(
     'title' => 'KnownUser.V3.PHP',
     'version' => '3',
   );    
-	return $libraries;
+  return $libraries;
 }
 
 /**

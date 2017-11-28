@@ -13,16 +13,17 @@ class QueueitBase {
   protected $secretKey;      // Secret key.
   protected $eventConfig;    // Event config.
   protected $configJson;     // Integration config.
-	protected $queueDomain;    // Domain name of the queue.
-	protected $cookieValidity; // Session cookie validity time (in min).
-	protected $extCookieTime;  // Extended validity of session cookie (bool).
-	protected $cookieDomain;   // Cookie domain.
-	protected $layoutName;     // Name of the queue ticket layout.
-	protected $cultureLayout;  // Culture of the queue ticket layout.
+  protected $queueDomain;    // Domain name of the queue.
+  protected $cookieValidity; // Session cookie validity time (in min).
+  protected $extCookieTime;  // Extended validity of session cookie (bool).
+  protected $cookieDomain;   // Cookie domain.
+  protected $layoutName;     // Name of the queue ticket layout.
+  protected $cultureLayout;  // Culture of the queue ticket layout.
+  protected $isDebug;        // Debug mode.
 
-	// Constants.
-	const QI_API_DOMAIN = 'queue-it.net';
-	const QI_CONFIG_URI = '/status/integrationconfig';
+  // Constants.
+  const QI_API_DOMAIN = 'queue-it.net';
+  const QI_CONFIG_URI = '/status/integrationconfig';
 
   /**
    * Class constructor.
@@ -40,7 +41,7 @@ class QueueitBase {
     $this->cookieDomain = variable_get('queueit_queue_domain');
     $this->layoutName = variable_get('queueit_layout_name');
     $this->cultureLayout = variable_get('queueit_culture_of_layout');
-    $this->setEventConfig();
+    $this->isDebug = variable_get('queueit_culture_of_layout', FALSE);
   }
 
   /**
@@ -50,7 +51,7 @@ class QueueitBase {
    * Returns TRUE if config is valid (e.g. credentials aren't empty).
    */
   function validateConfig() {
-    return $this->getCustomerId();
+    return $this->getCustomerId() && $this->secretKey;
   }
 
   /* Setters */
@@ -59,59 +60,69 @@ class QueueitBase {
    * Sets event config.
    */
   function setEventConfig() {
-		$eventConfig = new QueueEventConfig;
+    $eventConfig = new QueueEventConfig;
 
-		$eventConfig->eventId = ""; // ID of the queue to use.
+    // ID of the queue to use.
+    $eventConfig->eventId = "";
 
     // Domain name of the queue.
     // Usually in the format [CustomerId].queue-it.net
-		$eventConfig->queueDomain = $this->queueDomain;
+    $eventConfig->queueDomain = $this->queueDomain;
 
     // Domain name where the Queue-it session cookie should be saved.
     // Optional.
-		$eventConfig->cookieDomain = $this->cookieDomain;
+    $eventConfig->cookieDomain = $this->cookieDomain;
 
     // Validity of the Queue-it session cookie.
     // Optional. Default is 10 minutes.
-		$eventConfig->cookieValidityMinute = $this->cookieValidity; 
+    $eventConfig->cookieValidityMinute = $this->cookieValidity; 
 
     // Should the Queue-it session cookie validity time be extended each time the validation runs?
     // Optional. Default is true.
-		$eventConfig->extendCookieValidity = $this->extCookieTime;
+    $eventConfig->extendCookieValidity = $this->extCookieTime;
 
     // Name of the queue ticket layout - e.g. "Default layout by Queue-it".
     // Optional. Default is to take what is specified on the Event
-		$eventConfig->layoutName = $this->layoutName;
+    $eventConfig->layoutName = $this->layoutName;
 
     // Culture of the queue ticket layout in the format specified at:
     // https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx
     // Default is to use what is specified on Event. E.g. "en-GB".
-		$eventConfig->culture = $this->cultureLayout;
+    $eventConfig->culture = $this->cultureLayout;
 
-		$this->eventConfig = $eventConfig;
+    $this->eventConfig = $eventConfig;
   }
 
   /* Getters */
 
   /**
-   * Get integration config.
+   * Retrieve the integration config.
    *
    * @return string
    * Returns plain JSON content.
    */
   function getIntegrationConfig() {
+    // Ignore fetching on invalid configuration.
     if (!$this->validateConfig()) {
       return NULL;
     }
-    $config_url = sprintf("http://%s.%s%s/%s",
-        $this->getCustomerId(),
-        self::QI_API_DOMAIN,
-        self::QI_CONFIG_URI,
-        $this->getCustomerId()
-        );
+
     // Get the auto-generated config file published on Queue-it Go platform.
     // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
-    return file_get_contents($config_url);
+    // @todo: Consider caching the config to minimalize external requests.
+    return file_get_contents($this->getIntegrationConfigPath());
+  }
+
+  /**
+   * Get the integration config URL.
+   */
+  function getIntegrationConfigPath() {
+    return sprintf("http://%s.%s%s/%s",
+      $this->getCustomerId(),
+      self::QI_API_DOMAIN,
+      self::QI_CONFIG_URI,
+      $this->getCustomerId()
+    );
   }
 
   /**
@@ -147,6 +158,13 @@ class QueueitBase {
    */
   function getFullRequestUri() {
     return file_create_url(current_path());
+  }
+
+  /**
+   * Gets event config.
+   */
+  function getEventConfig() {
+    return $this->eventConfig;
   }
 
 }
