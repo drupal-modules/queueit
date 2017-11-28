@@ -10,13 +10,13 @@
     "keywords": ["Queue-it", "framework"],
     "license": "LGPL-3.0+",
     "require": {
-        "queueit/knownuserv3": "dev-master",
+        "queueit/knownuserv3": "dev-task/composer-autoloader",
         "php": ">=5.2.0"
     },
 		"repositories": [
       {
         "type": "vcs",
-        "url": "https://github.com/queueit/KnownUser.V3.PHP"
+        "url": "https://github.com/kenorb-contrib/KnownUser.V3.PHP"
       }
     ]
 }
