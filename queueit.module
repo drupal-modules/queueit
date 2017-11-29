@@ -5,7 +5,7 @@
  * Queue-it main module file.
  */
 
-define('QUEUEIT_EXCLUDE',  "admin\nadmin/*\nsites/*\nsystem/ajax/*");
+define('QUEUEIT_EXCLUDE', "admin\nadmin/*\nsites/*\nsystem/ajax/*");
 
 /**
  * Implements hook_help().
@@ -16,7 +16,7 @@ function queueit_help($path, $arg) {
   $content .= file_get_contents(libraries_get_path('composer') . '/queueit/knownuserv3' . '/README.md');
   module_load_include('inc', 'queueit');
   switch ($path) {
-    // Main module help for the queueit module
+    // Main module help for the queueit module.
     case 'admin/help#queueit':
       return '<p>' . queueit_md2html($content) . '</p>';
   }
@@ -43,13 +43,13 @@ function queueit_init() {
     // Check for matching page path to exclude.
     $page_match = drupal_match_path($curr_path, drupal_strtolower($path));
     if ($curr_path != $_GET['q']) {
-      $page_match = $page_match || drupal_match_path($_GET['q'], $pages);
+      $page_match = $page_match || drupal_match_path($_GET['q'], drupal_strtolower($path));
     }
     if ($page_match) {
       return;
     }
   }
-  $known_user = new QueueitKnownUser;
+  $known_user = new QueueitKnownUser();
   // Ignore processing if the config is invalid.
   if (!$known_user->validateConfig()) {
     return;
@@ -67,6 +67,7 @@ function queueit_init() {
       case 'code':
         $result = $known_user->validateRequestByIntegrationConfig();
         break;
+
       case 'integration':
         $result = $known_user->resolveRequestByLocalEventConfig();
         break;
@@ -106,16 +107,16 @@ function queueit_menu() {
   return $items;
 }
 
-/** 
+/**
  * Implements hook_library().
  */
 function queueit_library() {
   // Register libraries available in the external directory.
-  $path = libraries_get_path('composer') . '/queueit/knownuserv3';
   $libraries['queueit/KnownUser'] = array(
     'title' => 'KnownUser.V3.PHP',
+    'website' => 'https://github.com/queueit/KnownUser.V3.PHP',
     'version' => '3',
-  );    
+  );
   return $libraries;
 }
 

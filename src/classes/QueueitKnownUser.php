@@ -10,7 +10,7 @@ class QueueitKnownUser extends QueueitBase {
   /**
    * Validate that the user has been through the queue.
    */
-  function validateRequestByIntegrationConfig() {
+  public function validateRequestByIntegrationConfig() {
     /*
      * This call will validate the timestamp and hash
      * and if valid create a cookie with a TTL like:
@@ -31,7 +31,7 @@ class QueueitKnownUser extends QueueitBase {
   /**
    * Verify if the user has been through the queue.
    */
-  function resolveRequestByLocalEventConfig() {
+  public function resolveRequestByLocalEventConfig() {
     $this->setEventConfig();
     return KnownUser::resolveRequestByLocalEventConfig(
       $this->getFullRequestUri(),

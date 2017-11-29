@@ -47,6 +47,16 @@ KnownUser API
 You can use the Known user setting to test if a specific user has arrived at your site via the queue,
 or if the user has tried to bypass the queue. The KnownUser validation must only be done on page requests.
 
+Troubleshooting
+===============
+
+> Error: Class KnownUser not found
+
+When using _Composer Manager_, make sure you've rebuilded and updated `composer.json` correctly by:
+
+    drush composer-json-rebuild
+    drush composer-manager update
+
 Notes
 =====
 
@@ -55,4 +65,4 @@ Notes
 - Older versions [API1](http://api.queue-it.net) has been deprecated now.
 - The service will accept both XML and JSON formatted data by setting the `Content-Type` HTTP header.
 - Source code and binaries are available at [Github](https://github.com/queueit).
-- For support of Queue-it Implementation, please contact Queue-itsupport at <support@queue-it.net>.
+- For support of Queue-it Implementation, please contact Queue-it support at <support@queue-it.net>.

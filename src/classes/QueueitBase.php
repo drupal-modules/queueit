@@ -7,7 +7,7 @@ use QueueIT\KnownUserV3\SDK\QueueEventConfig;
  */
 class QueueitBase {
 
-  // Protected variables.
+  /* Protected variables */
   protected $apiKey;         // API Key.
   protected $customerID;     // Customer ID.
   protected $secretKey;      // Secret key.
@@ -20,15 +20,14 @@ class QueueitBase {
   protected $layoutName;     // Name of the queue ticket layout.
   protected $cultureLayout;  // Culture of the queue ticket layout.
   protected $isDebug;        // Debug mode.
-
-  // Constants.
+  /* Constants */
   const QI_API_DOMAIN = 'queue-it.net';
   const QI_CONFIG_URI = '/status/integrationconfig';
 
   /**
    * Class constructor.
    */
-  function __construct($customer_id = '', $secret_key = '', $api_key = '') {
+  public function __construct($customer_id = '', $secret_key = '', $api_key = '') {
     $this->apiKey = $api_key
       ?: variable_get('queueit_api_key');
     $this->customerID = $customer_id
@@ -48,9 +47,9 @@ class QueueitBase {
    * Validate config.
    *
    * @return bools
-   * Returns TRUE if config is valid (e.g. credentials aren't empty).
+   *   Returns TRUE if config is valid (e.g. credentials aren't empty).
    */
-  function validateConfig() {
+  public function validateConfig() {
     return $this->getCustomerId() && $this->secretKey;
   }
 
@@ -59,14 +58,14 @@ class QueueitBase {
   /**
    * Sets event config.
    */
-  function setEventConfig() {
-    $eventConfig = new QueueEventConfig;
+  public function setEventConfig() {
+    $eventConfig = new QueueEventConfig();
 
     // ID of the queue to use.
     $eventConfig->eventId = "";
 
     // Domain name of the queue.
-    // Usually in the format [CustomerId].queue-it.net
+    // Usually in the format [CustomerId].queue-it.net.
     $eventConfig->queueDomain = $this->queueDomain;
 
     // Domain name where the Queue-it session cookie should be saved.
@@ -75,14 +74,14 @@ class QueueitBase {
 
     // Validity of the Queue-it session cookie.
     // Optional. Default is 10 minutes.
-    $eventConfig->cookieValidityMinute = $this->cookieValidity; 
+    $eventConfig->cookieValidityMinute = $this->cookieValidity;
 
     // Should the Queue-it session cookie validity time be extended each time the validation runs?
     // Optional. Default is true.
     $eventConfig->extendCookieValidity = $this->extCookieTime;
 
     // Name of the queue ticket layout - e.g. "Default layout by Queue-it".
-    // Optional. Default is to take what is specified on the Event
+    // Optional. Default is to take what is specified on the Event.
     $eventConfig->layoutName = $this->layoutName;
 
     // Culture of the queue ticket layout in the format specified at:
@@ -99,9 +98,9 @@ class QueueitBase {
    * Retrieve the integration config.
    *
    * @return string
-   * Returns plain JSON content.
+   *   Returns plain JSON content.
    */
-  function getIntegrationConfig() {
+  public function getIntegrationConfig() {
     // Ignore fetching on invalid configuration.
     if (!$this->validateConfig()) {
       return NULL;
@@ -116,7 +115,7 @@ class QueueitBase {
   /**
    * Get the integration config URL.
    */
-  function getIntegrationConfigPath() {
+  public function getIntegrationConfigPath() {
     return sprintf("http://%s.%s%s/%s",
       $this->getCustomerId(),
       self::QI_API_DOMAIN,
@@ -128,42 +127,42 @@ class QueueitBase {
   /**
    * Get API Key.
    */
-  function getAPIKey() {
+  public function getAPIKey() {
     return $this->apiKey;
   }
 
   /**
    * Get customer ID.
    */
-  function getCustomerId() {
+  public function getCustomerId() {
     return $this->customerID;
   }
 
   /**
    * Get secret key.
    */
-  function getSecretKey() {
+  public function getSecretKey() {
     return $this->secretKey;
   }
 
   /**
    * Get a queue token.
    */
-  function getQueueToken() {
+  public function getQueueToken() {
     return filter_input(INPUT_GET, 'queueittoken');
   }
 
   /**
    * Helper method to get the current URL.
    */
-  function getFullRequestUri() {
+  public function getFullRequestUri() {
     return file_create_url(current_path());
   }
 
   /**
    * Gets event config.
    */
-  function getEventConfig() {
+  public function getEventConfig() {
     return $this->eventConfig;
   }
 

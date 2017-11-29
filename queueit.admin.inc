@@ -23,7 +23,7 @@ function queueit_settings_form($form, &$form_state) {
     '#options' => [
       'integration' => 'Integration config',
       'code' => 'Configuration in code',
-      //'js' => 'JavaScript', // @todo
+      // 'js' => 'JavaScript', // @todo
     ],
     '#description' => t('Select the type of Queue-it implementation.<br>Select Integration Config to load the configuration from the Go Queue-it platform.<br>Select Configuration in code if your application server is not allowed to do external GET requests (this is without using the Trigger/Action paradigm).'),
     '#default_value' => variable_get('queueit_mode', 'code'),
@@ -78,8 +78,8 @@ function queueit_settings_form($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Culture of the queue ticket layout.'),
     '#description' => t('Culture of the queue ticket layout in the format specified <a href="!url">here</a>.',
-      [ '!url' => 'https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx' ]
-      ),
+      ['!url' => 'https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx']
+    ),
     '#default_value' => variable_get('queueit_culture_of_layout'),
   );
   /* Validation parameters */
@@ -87,13 +87,13 @@ function queueit_settings_form($form, &$form_state) {
     '#title' => 'Validation logic',
     '#type' => 'fieldset',
   );
-	// Exclude Queue-it on specific pages.
-	$form['validate']['queueit_exclude_pages'] = array(
-		'#type' => 'textarea',
-		'#title' => t('Exclude Queue-it on specific pages.'),
-		'#default_value' => variable_get('queueit_exclude_pages', QUEUEIT_EXCLUDE),
-		'#description' => t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. It is recommended to exclude resources and AJAX calls."),
-	);
+  // Exclude Queue-it on specific pages.
+  $form['validate']['queueit_exclude_pages'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Exclude Queue-it on specific pages.'),
+    '#default_value' => variable_get('queueit_exclude_pages', QUEUEIT_EXCLUDE),
+    '#description' => t("Specify pages by using their paths. Enter one path per line. The '*' character is a wildcard. It is recommended to exclude resources and AJAX calls."),
+  );
   $form['validate']['queueit_ignore_post'] = array(
     '#type' => 'checkbox',
     '#title' => t('Ignore queue validation for the POST requests.'),
@@ -144,7 +144,7 @@ function queueit_settings_form_validate($form, &$form_state) {
   module_load_include('php', 'queueit', 'src/classes/QueueitKnownUser');
   // Validate the configuration.
   try {
-    $known_user = new QueueitKnownUser;
+    $known_user = new QueueitKnownUser();
     if (!$known_user->validateConfig()) {
       drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
     }
@@ -152,6 +152,7 @@ function queueit_settings_form_validate($form, &$form_state) {
       case 'code':
         $result = $known_user->validateRequestByIntegrationConfig();
         break;
+
       case 'integration':
         $config = $known_user->getIntegrationConfig();
         if (!$config) {

@@ -24,7 +24,7 @@ class QueueitTestCase extends DrupalWebTestCase {
   /**
    * Implements setUp().
    */
-  function setUp() {
+  public function setUp() {
     // Call the parent with an array of modules to enable for the test.
     parent::setUp(array('queueit'));
 
@@ -34,7 +34,7 @@ class QueueitTestCase extends DrupalWebTestCase {
   /**
    * Test the module's functionality.
    */
-  function testTodoChangeThisName() {
+  public function testTodoChangeThisName() {
     // TODO: write test!
   }
 
