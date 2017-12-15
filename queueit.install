@@ -14,9 +14,10 @@ function queueit_requirements($phase) {
   if ($phase == 'runtime') {
     $t = get_t();
     $known_user_lib = drupal_get_library('queueit', 'queueit/KnownUser');
-    $exists = $known_user_lib;
+    $known_user_exists = file_exists(libraries_get_path('composer') . '/queueit/knownuserv3' . '/KnownUser.php');
+    $exists = $known_user_lib && $known_user_exists;
     $requirements['queueit'] = array(
-      'title' => $t('KnownUser.V3.PHP'),
+      'title' => $t('Queue-it'),
       'severity' => $exists ? REQUIREMENT_OK : REQUIREMENT_ERROR,
       'value' => $t('%lib library %state.',
         [

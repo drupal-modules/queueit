@@ -26,7 +26,7 @@ function queueit_settings_form($form, &$form_state) {
       // 'js' => 'JavaScript', // @todo
     ],
     '#description' => t('Select the type of Queue-it implementation.<br>Select Integration Config to load the configuration from the Go Queue-it platform.<br>Select Configuration in code if your application server is not allowed to do external GET requests (this is without using the Trigger/Action paradigm).'),
-    '#default_value' => variable_get('queueit_mode', 'code'),
+    '#default_value' => variable_get('queueit_mode', 'integration'),
   );
   $form['config']['queueit_debug'] = array(
     '#type' => 'checkbox',
@@ -42,6 +42,7 @@ function queueit_settings_form($form, &$form_state) {
     '#collapsible' => TRUE,
     '#collapsed' => variable_get('queueit_mode', 'code') == 'integration',
     '#disabled' => variable_get('queueit_mode', 'code') == 'integration',
+    '#states' => ['disabled' => [':input[name="queueit_mode"]' => ['value' => 'integration']]]
   );
   $form['event_config']['queueit_event_id'] = array(
     '#type' => 'textfield',

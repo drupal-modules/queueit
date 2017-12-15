@@ -5,7 +5,7 @@
  * Queue-it main module file.
  */
 
-define('QUEUEIT_EXCLUDE', "admin\nadmin/*\nsites/*\nsystem/ajax/*");
+define('QUEUEIT_EXCLUDE', "admin\nadmin/*\nsites/*\nsystem/ajax/*\nuser/*");
 
 /**
  * Implements hook_help().
