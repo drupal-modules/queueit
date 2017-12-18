@@ -13,12 +13,15 @@ class QueueitBase {
   protected $secretKey;      // Secret key.
   protected $eventConfig;    // Event config.
   protected $configJson;     // Integration config.
-  protected $queueDomain;    // Domain name of the queue.
+  /* Variables used for 'configuration in code' method */
+  protected $eventID;        // Event ID (code only).
+  protected $queueDomain;    // Domain name of the queue (code only).
   protected $cookieValidity; // Session cookie validity time (in min).
-  protected $extCookieTime;  // Extended validity of session cookie (bool).
+  protected $extendCookie;  // Extended validity of session cookie (bool).
   protected $cookieDomain;   // Cookie domain.
   protected $layoutName;     // Name of the queue ticket layout.
   protected $cultureLayout;  // Culture of the queue ticket layout.
+  /* Other variables */
   protected $isDebug;        // Debug mode.
   /* Constants */
   const QI_API_DOMAIN = 'queue-it.net';
@@ -34,9 +37,10 @@ class QueueitBase {
       ?: variable_get('queueit_customer_id');
     $this->secretKey = $secret_key
       ?: variable_get('queueit_secret_key');
+    $this->eventID = variable_get('queueit_event_id');
     $this->queueDomain = variable_get('queueit_queue_domain');
-    $this->cookieValidity = variable_get('queueit_cookie_validity');
-    $this->extCookieTime = variable_get('queueit_extend_cookie_validity', TRUE);
+    $this->cookieValidity = (int) variable_get('queueit_cookie_validity', 10) ?: 10;
+    $this->extendCookie = (bool) variable_get('queueit_extend_cookie_validity', TRUE);
     $this->cookieDomain = variable_get('queueit_queue_domain');
     $this->layoutName = variable_get('queueit_layout_name');
     $this->cultureLayout = variable_get('queueit_culture_of_layout');
@@ -62,7 +66,7 @@ class QueueitBase {
     $eventConfig = new QueueEventConfig();
 
     // ID of the queue to use.
-    $eventConfig->eventId = "";
+    $eventConfig->eventId = $this->eventID;
 
     // Domain name of the queue.
     // Usually in the format [CustomerId].queue-it.net.
@@ -78,7 +82,7 @@ class QueueitBase {
 
     // Should the Queue-it session cookie validity time be extended each time the validation runs?
     // Optional. Default is true.
-    $eventConfig->extendCookieValidity = $this->extCookieTime;
+    $eventConfig->extendCookieValidity = $this->extendCookie;
 
     // Name of the queue ticket layout - e.g. "Default layout by Queue-it".
     // Optional. Default is to take what is specified on the Event.

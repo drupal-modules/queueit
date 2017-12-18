@@ -151,7 +151,7 @@ function queueit_settings_form_validate($form, &$form_state) {
     }
     switch (variable_get('queueit_mode', 'code')) {
       case 'code':
-        $result = $known_user->validateRequestByIntegrationConfig();
+        $result = $known_user->resolveRequestByLocalEventConfig();
         break;
 
       case 'integration':
@@ -168,7 +168,7 @@ function queueit_settings_form_validate($form, &$form_state) {
             ['!url' => $known_user->getIntegrationConfigPath()]),
             'warning');
         }
-        $result = $known_user->resolveRequestByLocalEventConfig();
+        $result = $known_user->validateRequestByIntegrationConfig();
         break;
     }
   }

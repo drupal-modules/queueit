@@ -63,13 +63,18 @@ function queueit_init() {
     return;
   }
   try {
-    switch (variable_get('queueit_mode', 'code')) {
+    $method = variable_get('queueit_mode', 'code');
+    switch ($method) {
       case 'code':
-        $result = $known_user->validateRequestByIntegrationConfig();
+        $result = $known_user->resolveRequestByLocalEventConfig();
         break;
 
       case 'integration':
-        $result = $known_user->resolveRequestByLocalEventConfig();
+        $result = $known_user->validateRequestByIntegrationConfig();
+        break;
+
+      default:
+        watchdog('queueit', 'Unknown method type: %type', ['%type' => $method], WATCHDOG_WARNING);
         break;
     }
     if (!empty($result)
