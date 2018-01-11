@@ -13,6 +13,7 @@ class QueueitBase {
   protected $secretKey;      // Secret key.
   protected $eventConfig;    // Event config.
   protected $configJson;     // Integration config.
+
   /* Variables used for 'configuration in code' method */
   protected $eventID;        // Event ID (code only).
   protected $queueDomain;    // Domain name of the queue (code only).
@@ -21,11 +22,15 @@ class QueueitBase {
   protected $cookieDomain;   // Cookie domain.
   protected $layoutName;     // Name of the queue ticket layout.
   protected $cultureLayout;  // Culture of the queue ticket layout.
+
   /* Other variables */
   protected $isDebug;        // Debug mode.
+
   /* Constants */
-  const QI_API_DOMAIN = 'queue-it.net';
-  const QI_CONFIG_URI = '/status/integrationconfig';
+  const QI_API_DOMAIN    = 'queue-it.net';
+  const QI_CONFIG_URI    = '/status/integrationconfig';
+  const QI_JS_CLIENT_URL = '//static.queue-it.net/script/queueclient.min.js';
+  const QI_JS_LOADER_URL = '//static.queue-it.net/script/queueconfigloader.min.js';
 
   /**
    * Class constructor.
@@ -55,6 +60,14 @@ class QueueitBase {
    */
   public function validateConfig() {
     return $this->getCustomerId() && $this->secretKey;
+  }
+
+  /**
+   * Validate JS endpoints.
+   */
+  public function validateJsEndpoints() {
+    return file_get_contents(self::QI_JS_CLIENT_URL)
+      && file_get_contents(self::QI_JS_LOADER_URL);
   }
 
   /* Setters */

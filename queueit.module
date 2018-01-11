@@ -74,8 +74,8 @@ function queueit_init() {
         break;
 
       case 'js':
-        drupal_add_js('//static.queue-it.net/script/queueclient.min.js', 'external');
-        drupal_add_js('//static.queue-it.net/script/queueconfigloader.min.js', 'external');
+        drupal_add_js(QueueitBase::QI_JS_CLIENT_URL, 'external');
+        drupal_add_js(QueueitBase::QI_JS_LOADER_URL, 'external');
         break;
 
       default:
