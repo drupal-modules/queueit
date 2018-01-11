@@ -41,8 +41,8 @@ function queueit_settings_form($form, &$form_state) {
     '#description' => t('When configuration in code is selected, you can specify the following parameters without using the Trigger/Action paradigm. Useful when your application server is not allowed to do external GET requests.'),
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
-    '#collapsed' => variable_get('queueit_mode', 'code') == 'integration',
-    '#disabled' => variable_get('queueit_mode', 'code') == 'integration',
+    '#collapsed' => variable_get('queueit_mode', 'integration') <> 'code',
+    '#disabled' => variable_get('queueit_mode', 'integration') <> 'code',
     '#states' => [
       'disabled' => [':input[name="queueit_mode"]' => ['!value' => 'code']],
       'collapsed' => [':input[name="queueit_mode"]' => ['!value' => 'code']],
@@ -144,16 +144,28 @@ function queueit_settings_form($form, &$form_state) {
  * Form builder.
  */
 function queueit_settings_form_validate($form, &$form_state) {
+
+  if (form_get_errors()) {
+    return FALSE;
+  }
+
   // Manually load the file classes.
   module_load_include('php', 'queueit', 'src/classes/QueueitBase');
   module_load_include('php', 'queueit', 'src/classes/QueueitKnownUser');
+
   // Validate the configuration.
   try {
+
     $known_user = new QueueitKnownUser();
     if (!$known_user->validateConfig()) {
       drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
     }
-    switch (variable_get('queueit_mode', 'code')) {
+
+    switch (variable_get('queueit_mode', 'integration')) {
+      case 'js':
+        $result = $known_user->validateJsEndpoints();
+        break;
+
       case 'code':
         $result = $known_user->resolveRequestByLocalEventConfig();
         break;
@@ -174,12 +186,22 @@ function queueit_settings_form_validate($form, &$form_state) {
         }
         $result = $known_user->validateRequestByIntegrationConfig();
         break;
+
+      default:
+        form_set_error('queueit_mode', $e->getMessage());
+        drupal_set_message(
+          t('Invalid integration method: !method.',
+          ['!method' => variable_get('queueit_mode', 'integration')]),
+          'error');
     }
+
   }
   catch (\Exception $e) {
     drupal_set_message(t('Exception error: ') . $e->getMessage(), 'error');
     watchdog_exception('queueit', $e);
+    form_set_error('queueit_mode', $e->getMessage());
   }
+
   if (!empty($result) && $result) {
     drupal_set_message(t('Configuration successfully validated.'), 'status');
   }
