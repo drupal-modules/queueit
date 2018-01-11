@@ -156,7 +156,7 @@ function queueit_settings_form_validate($form, &$form_state) {
   }
 
   // Initialize required variables.
-  $int_method = variable_get('queueit_mode', 'integration');
+  $int_method = $form_state['values']['queueit_mode'];
 
   // Check the backend method requirements.
   if ($int_method <> 'js') {
@@ -176,21 +176,24 @@ function queueit_settings_form_validate($form, &$form_state) {
   // Validate the configuration.
   try {
 
-    $known_user = new QueueitKnownUser();
-    if (!$known_user->validateConfig()) {
-      drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
-    }
-
     switch ($int_method) {
       case 'js':
-        $result = $known_user->validateJsEndpoints();
+        $result = QueueitBase::validateJsEndpoints();
         break;
 
       case 'code':
+        $known_user = new QueueitKnownUser();
+        if (!$known_user->validateConfig()) {
+          drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
+        }
         $result = $known_user->resolveRequestByLocalEventConfig();
         break;
 
       case 'integration':
+        $known_user = new QueueitKnownUser();
+        if (!$known_user->validateConfig()) {
+          drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
+        }
         $config = $known_user->getIntegrationConfig();
         if (!$config) {
           drupal_set_message(

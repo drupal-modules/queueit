@@ -40,9 +40,9 @@ class QueueitBase {
   /**
    * Validate JS endpoints.
    */
-  public function validateJsEndpoints() {
-    return file_get_contents(self::QI_JS_CLIENT_URL)
-      && file_get_contents(self::QI_JS_LOADER_URL);
+  static public function validateJsEndpoints() {
+    return file_get_contents('http:' . self::QI_JS_CLIENT_URL)
+      && file_get_contents('http:' . self::QI_JS_LOADER_URL);
   }
 
   /* Getters */
