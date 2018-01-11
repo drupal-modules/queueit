@@ -150,8 +150,23 @@ function queueit_settings_form($form, &$form_state) {
  */
 function queueit_settings_form_validate($form, &$form_state) {
 
+  // Fail in case of any existing form validation errors.
   if (form_get_errors()) {
     return FALSE;
+  }
+
+  // Initialize required variables.
+  $int_method = variable_get('queueit_mode', 'integration');
+
+  // Check the backend method requirements.
+  if ($int_method <> 'js') {
+    module_load_include('install', 'queueit');
+    $requirements = module_invoke('queueit', 'requirements', 'runtime');
+    $severity = drupal_requirements_severity($requirements);
+    if ($severity == REQUIREMENT_ERROR) {
+      form_set_error(NULL, 'KnownUser.V3 library not installed!');
+      return FALSE;
+    }
   }
 
   // Manually load the file classes.
@@ -166,7 +181,7 @@ function queueit_settings_form_validate($form, &$form_state) {
       drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
     }
 
-    switch (variable_get('queueit_mode', 'integration')) {
+    switch ($int_method) {
       case 'js':
         $result = $known_user->validateJsEndpoints();
         break;
@@ -196,7 +211,7 @@ function queueit_settings_form_validate($form, &$form_state) {
         form_set_error('queueit_mode', $e->getMessage());
         drupal_set_message(
           t('Invalid integration method: !method.',
-          ['!method' => variable_get('queueit_mode', 'integration')]),
+          ['!method' => $int_method]),
           'error');
     }
 
