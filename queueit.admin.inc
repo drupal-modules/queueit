@@ -116,12 +116,6 @@ function queueit_settings_form($form, &$form_state) {
     '#title' => 'Queue-it Credentials',
     '#type' => 'fieldset',
   );
-  $form['creds']['queueit_api_key'] = array(
-    '#type' => 'textfield',
-    '#title' => t('API Key'),
-    '#description' => t('Specify the Api-key which can be supplied through the query string parameter. The key can be found in the GO Queue-it Platform.'),
-    '#default_value' => variable_get('queueit_api_key'),
-  );
   $form['creds']['queueit_customer_id'] = array(
     '#type' => 'textfield',
     '#title' => t('Customer ID'),
@@ -129,12 +123,17 @@ function queueit_settings_form($form, &$form_state) {
     '#default_value' => variable_get('queueit_customer_id'),
     '#required' => TRUE,
   );
+  $form['creds']['queueit_api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('API Key'),
+    '#description' => t('Specify the Api-key which can be supplied through the query string parameter. The key can be found in the GO Queue-it Platform.'),
+    '#default_value' => variable_get('queueit_api_key'),
+  );
   $form['creds']['queueit_secret_key'] = array(
     '#type' => 'textfield',
     '#title' => t('Secret key'),
     '#description' => t('Your 72 char secret key as specified in Go Queue-it self-service platform.'),
     '#default_value' => variable_get('queueit_secret_key'),
-    '#required' => TRUE,
   );
 
   return system_settings_form($form);
