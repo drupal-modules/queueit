@@ -73,6 +73,11 @@ function queueit_init() {
         $result = $known_user->validateRequestByIntegrationConfig();
         break;
 
+      case 'js':
+        drupal_add_js('//static.queue-it.net/script/queueclient.min.js', 'external');
+        drupal_add_js('//static.queue-it.net/script/queueconfigloader.min.js', 'external');
+        break;
+
       default:
         watchdog('queueit', 'Unknown method type: %type', ['%type' => $method], WATCHDOG_WARNING);
         break;

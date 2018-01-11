@@ -16,16 +16,17 @@ function queueit_settings_form($form, &$form_state) {
   );
   // Implementation type.
   // * Integration - Validate a user via integration config.
+  // * JavaScript - Validate a user via JavaScript on the client side.
   // * Code - Specify the configuration in code without using the Trigger/Action paradigm.
   $form['config']['queueit_mode'] = array(
     '#type' => 'radios',
     '#title' => t('Queue-it mode.'),
     '#options' => [
       'integration' => 'Integration config',
+      'js' => 'JavaScript',
       'code' => 'Configuration in code',
-      // 'js' => 'JavaScript', // @todo
     ],
-    '#description' => t('Select the type of Queue-it implementation.<br>Select Integration Config to load the configuration from the Go Queue-it platform.<br>Select Configuration in code if your application server is not allowed to do external GET requests (this is without using the Trigger/Action paradigm).'),
+    '#description' => t('Select the method used to integrate Queue-it:<br>Integration Config - used to load the configuration from the Go Queue-it platform.<br>JavaScript - protects pages by the queue on the client side.<br>Configuration in code - recommended for testing specific event or when your application server is not allowed to do external GET requests (this is without using the Trigger/Action paradigm).'),
     '#default_value' => variable_get('queueit_mode', 'integration'),
   );
   $form['config']['queueit_debug'] = array(
@@ -42,7 +43,10 @@ function queueit_settings_form($form, &$form_state) {
     '#collapsible' => TRUE,
     '#collapsed' => variable_get('queueit_mode', 'code') == 'integration',
     '#disabled' => variable_get('queueit_mode', 'code') == 'integration',
-    '#states' => ['disabled' => [':input[name="queueit_mode"]' => ['value' => 'integration']]]
+    '#states' => [
+      'disabled' => [':input[name="queueit_mode"]' => ['!value' => 'code']],
+      'collapsed' => [':input[name="queueit_mode"]' => ['!value' => 'code']],
+    ]
   );
   $form['event_config']['queueit_event_id'] = array(
     '#type' => 'textfield',
@@ -52,7 +56,7 @@ function queueit_settings_form($form, &$form_state) {
   );
   $form['event_config']['queueit_queue_domain'] = array(
     '#type' => 'textfield',
-    '#title' => t('Domain name of the queue - usually in the format [CustomerId].queue-it.net.'),
+    '#title' => t('Existing domain name of the queue - usually in the format [CustomerId].queue-it.net.'),
     '#description' => t('Specify ID of the queue to use.'),
     '#default_value' => variable_get('queueit_queue_domain'),
   );
