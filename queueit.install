@@ -10,7 +10,11 @@
  */
 function queueit_requirements($phase) {
   $requirements = array();
-  $int_method = variable_get('queueit_mode', 'integration');
+
+  // Load integration method either from POST or variable.
+  // Reading from POST is used during form validation (queueit_settings_form_validate).
+  $int_method = filter_input(INPUT_POST, 'queueit_mode') ?:
+    variable_get('queueit_mode', 'integration');
 
   if ($phase == 'runtime') {
     $t = get_t();
