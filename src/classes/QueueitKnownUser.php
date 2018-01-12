@@ -29,12 +29,14 @@ class QueueitKnownUser extends QueueitBase {
   /**
    * Class constructor.
    */
-  public function __construct($customer_id = '', $secret_key = '', $api_key = '') {
+  public function __construct($int_method = 'integration', $customer_id = '', $secret_key = '', $api_key = '') {
 
     // Initialize base class constructor.
     parent::__construct($customer_id);
 
     // Initialize class variables.
+    $this->intMethod = $int_method
+      ?: variable_get('queueit_mode');
     $this->apiKey = $api_key
       ?: variable_get('queueit_api_key');
     $this->secretKey = $secret_key
@@ -55,7 +57,7 @@ class QueueitKnownUser extends QueueitBase {
    *   Returns TRUE if config is valid (e.g. credentials aren't empty).
    */
   public function validateConfig() {
-    return $this->getCustomerId();
+    return $this->getCustomerId() && $this->getSecretKey();
   }
 
   /**
@@ -94,6 +96,21 @@ class QueueitKnownUser extends QueueitBase {
   }
 
   /* Setters */
+
+  /**
+   * Set API Key.
+   */
+  public function setAPIKey($api_key) {
+    return $this->apiKey = $api_key;
+  }
+
+  /**
+   * Set secret key.
+   */
+  public function setSecretKey($secret_key) {
+    return $this->secretKey = $secret_key;
+  }
+
 
   /**
    * Sets event config.
@@ -166,5 +183,24 @@ class QueueitKnownUser extends QueueitBase {
       $this->getCustomerId()
     );
   }
+
+  /**
+   * Retrieve the integration config.
+   *
+   * @return string
+   *   Returns plain JSON content.
+   */
+  public function getIntegrationConfig() {
+    // Ignore fetching on invalid configuration.
+    if (!$this->validateConfig()) {
+      return NULL;
+    }
+
+    // Get the auto-generated config file published on Queue-it Go platform.
+    // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
+    // @todo: Consider caching the config to minimalize external requests.
+    return file_get_contents($this->getIntegrationConfigPath());
+  }
+
 
 }

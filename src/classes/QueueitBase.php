@@ -6,6 +6,7 @@
 class QueueitBase {
 
   /* Protected variables */
+  protected $intMethod;      // Integration method (integration, js, code).
   protected $customerID;     // Customer ID.
 
   /* Other variables */
@@ -19,9 +20,11 @@ class QueueitBase {
   /**
    * Class constructor.
    */
-  public function __construct($customer_id = '') {
+  public function __construct($int_method = 'js', $customer_id = '') {
 
     // Initialize base class constructor.
+    $this->intMethod = $int_method
+      ?: variable_get('queueit_mode');
     $this->customerID = $customer_id
       ?: variable_get('queueit_customer_id');
     $this->isDebug = variable_get('queueit_debug', FALSE);
@@ -34,7 +37,7 @@ class QueueitBase {
    *   Returns TRUE if config is valid (e.g. credentials aren't empty).
    */
   public function validateConfig() {
-    return $this->getCustomerId() && $this->secretKey;
+    return $this->getCustomerId();
   }
 
   /**
@@ -45,31 +48,36 @@ class QueueitBase {
       && file_get_contents('http:' . self::QI_JS_LOADER_URL);
   }
 
-  /* Getters */
+  /* Setters */
 
   /**
-   * Retrieve the integration config.
-   *
-   * @return string
-   *   Returns plain JSON content.
+   * Set integration method.
    */
-  public function getIntegrationConfig() {
-    // Ignore fetching on invalid configuration.
-    if (!$this->validateConfig()) {
-      return NULL;
-    }
-
-    // Get the auto-generated config file published on Queue-it Go platform.
-    // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
-    // @todo: Consider caching the config to minimalize external requests.
-    return file_get_contents($this->getIntegrationConfigPath());
+  public function setIntegrationMethod($method) {
+    return $this->intMethod = $method;
   }
+
+  /**
+   * Set customer ID.
+   */
+  public function setCustomerId($customer_id) {
+    return $this->customerID = $customer_id;
+  }
+
+  /* Getters */
 
   /**
    * Get customer ID.
    */
   public function getCustomerId() {
     return $this->customerID;
+  }
+
+  /**
+   * Get integration method.
+   */
+  public function getIntegrationMethod() {
+    return $this->intMethod;
   }
 
   /**
