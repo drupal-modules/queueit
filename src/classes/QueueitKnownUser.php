@@ -49,6 +49,16 @@ class QueueitKnownUser extends QueueitBase {
   }
 
   /**
+   * Validate config.
+   *
+   * @return bools
+   *   Returns TRUE if config is valid (e.g. credentials aren't empty).
+   */
+  public function validateConfig() {
+    return $this->getCustomerId();
+  }
+
+  /**
    * Validate that the user has been through the queue.
    */
   public function validateRequestByIntegrationConfig() {

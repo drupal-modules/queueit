@@ -179,6 +179,9 @@ function queueit_settings_form_validate($form, &$form_state) {
     switch ($int_method) {
       case 'js':
         $result = QueueitBase::validateJsEndpoints();
+        if (!$result) {
+          drupal_set_message(t('Cannot access JS endpoints'), 'warning');
+        }
         break;
 
       case 'code':
@@ -227,5 +230,8 @@ function queueit_settings_form_validate($form, &$form_state) {
 
   if (!empty($result) && $result) {
     drupal_set_message(t('Configuration successfully validated.'), 'status');
+  }
+  else {
+    drupal_set_message(t('Configuration not valid. Please verify your configuration.'), 'warning');
   }
 }
