@@ -50,6 +50,7 @@ function queueit_init() {
     }
   }
   $known_user = new QueueitKnownUser();
+  $customer_id = $known_user->getCustomerId();
   // Ignore processing if the config is invalid.
   if (!$known_user->validateConfig()) {
     return;
@@ -75,7 +76,15 @@ function queueit_init() {
 
       case 'js':
         drupal_add_js(QueueitBase::QI_JS_CLIENT_URL, 'external');
-        drupal_add_js(QueueitBase::QI_JS_LOADER_URL, 'external');
+        /* @fixme: https://drupal.stackexchange.com/q/253634
+        drupal_add_js(QueueitBase::QI_JS_LOADER_URL,
+          [
+            'type' => 'external',
+            'data-queueit-c' => $customer_id,
+          ]);
+        */
+        $js_code = "<script data-queueit-c='$customer_id' type='text/javascript' src='//static.queue-it.net/script/queueconfigloader.min.js'></script>";
+        drupal_add_js($js_code, 'inline');
         break;
 
       default:
