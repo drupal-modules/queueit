@@ -12,9 +12,16 @@ function queueit_requirements($phase) {
   $requirements = array();
 
   // Load integration method either from POST or variable.
-  // Reading from POST is used during form validation (queueit_settings_form_validate).
+  // Reading from POST is used during form validation.
+  // @see: queueit_settings_form_validate().
   $int_method = filter_input(INPUT_POST, 'queueit_mode') ?:
     variable_get('queueit_mode', 'integration');
+  $customer_id = filter_input(INPUT_POST, 'queueit_customer_id') ?:
+    variable_get('queueit_customer_id');
+  $api_key = filter_input(INPUT_POST, 'queueit_api_key') ?:
+    variable_get('queueit_api_key');
+  $secret_key = filter_input(INPUT_POST, 'queueit_secret_key') ?:
+    variable_get('queueit_secret_key');
 
   if ($phase == 'runtime') {
     $t = get_t();
@@ -23,13 +30,13 @@ function queueit_requirements($phase) {
     $value = '';
     switch ($int_method) {
       case 'js':
-        $known_user = new QueueitKnownUser();
+        $known_user = new QueueitBase();
         $js_exists = $known_user->validateJsEndpoints();
         $severity = $js_exists
           ? REQUIREMENT_OK
           : REQUIREMENT_ERROR;
         $value = $js_exists
-          ? $t("JS files validated.")
+          ? $t("JavaScript integration: JS files validated.")
           : $t("Problem accessing external JS files.");
         break;
 
@@ -39,7 +46,7 @@ function queueit_requirements($phase) {
         $known_user_exists = file_exists(libraries_get_path('composer') . '/queueit/knownuserv3' . '/KnownUser.php');
         $exists = $known_user_lib && $known_user_exists;
         $severity = $exists ? REQUIREMENT_OK : REQUIREMENT_ERROR;
-        $value = $t('%lib library %state.',
+        $value = $t('Backend integration. %lib library %state.',
           [
             '%lib' => 'KnownUser.V3.PHP',
             '%state' => $exists ? 'installed' : 'not installed',
@@ -50,7 +57,7 @@ function queueit_requirements($phase) {
           $severity = REQUIREMENT_WARNING;
         }
         else {
-          $queueit = new QueueitBase();
+          $queueit = new QueueitKnownUser($int_method, $customer_id, $secret_key, $api_key);
           $config = $queueit->getIntegrationConfig();
           $severity = $config ? REQUIREMENT_OK : REQUIREMENT_WARNING;
           $description = json_encode(json_decode($config), TRUE);

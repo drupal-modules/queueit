@@ -157,6 +157,9 @@ function queueit_settings_form_validate($form, &$form_state) {
 
   // Initialize required variables.
   $int_method = $form_state['values']['queueit_mode'];
+  $customer_id = $form_state['values']['queueit_customer_id'];
+  $api_key = $form_state['values']['queueit_api_key'];
+  $secret_key = $form_state['values']['queueit_secret_key'];
 
   // Check the backend method requirements.
   if ($int_method <> 'js') {
@@ -185,7 +188,7 @@ function queueit_settings_form_validate($form, &$form_state) {
         break;
 
       case 'code':
-        $known_user = new QueueitKnownUser();
+        $known_user = new QueueitKnownUser($int_method, $customer_id, $secret_key, $api_key);
         if (!$known_user->validateConfig()) {
           drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
         }
@@ -193,7 +196,7 @@ function queueit_settings_form_validate($form, &$form_state) {
         break;
 
       case 'integration':
-        $known_user = new QueueitKnownUser();
+        $known_user = new QueueitKnownUser($int_method, $customer_id, $secret_key, $api_key);
         if (!$known_user->validateConfig()) {
           drupal_set_message(t('Queue-it configuration is not valid.'), 'warning');
         }
