@@ -91,7 +91,7 @@ class QueueitBase {
    * Helper method to get the current URL.
    */
   public function getFullRequestUri() {
-    return file_create_url(current_path());
+    return $GLOBALS['base_url'] . request_uri();
   }
 
 }
