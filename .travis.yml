@@ -1,0 +1,21 @@
+# .travis.yml - configuration file for the travis continuous integration service
+# see http://about.travis-ci.org/docs/user/languages/php for more hints
+#
+language: php
+
+# PHP versions to test against.
+# See: http://docs.travis-ci.com/user/languages/php/
+php:
+  - 5.6
+  - 7.1
+  - 7.2
+
+addons:
+  apt:
+    packages:
+    - drush
+
+script:
+  - ant -f tests/build.xml build test
+after_script:
+  - ant -f tests/build.xml composer-show

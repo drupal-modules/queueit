@@ -1,0 +1,19 @@
+{
+  "require-dev": {
+    "NT/base-build-xml": "dev-build-fixes"
+  },
+  "config": {
+    "bin-dir": "bin/"
+  },
+  "minimum-stability": "dev",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/National-Theatre/drupal-phpunit"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/kenorb-contrib/base-build-xml"
+    }
+  ]
+}

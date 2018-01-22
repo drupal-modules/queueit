@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Queue-it" default="build">
+  <property name="composerdir" value="${basedir}/../tests" />
+  <import>
+    <url url="https://raw.githubusercontent.com/drupal-modules/base-build-xml/build-fixes/base.xml"/>
+  </import>
+  <target name="build"
+          depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcs-security-ci,phpcpd,phpunit,behat,phpcov,combine-junit-xml,phpcb"/>
+</project>
