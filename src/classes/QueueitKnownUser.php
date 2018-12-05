@@ -175,7 +175,7 @@ class QueueitKnownUser extends QueueitBase {
   /**
    * Get the integration config URL.
    */
-  public function getIntegrationConfigPath() {
+  public function getIntegrationConfigUrl() {
     return sprintf("http://%s.%s%s/%s",
       $this->getCustomerId(),
       self::QI_API_DOMAIN,
@@ -185,22 +185,55 @@ class QueueitKnownUser extends QueueitBase {
   }
 
   /**
-   * Retrieve the integration config.
+   * Get the integration config.
    *
-   * @return string
-   *   Returns plain JSON content.
+   * By default load the config from the variable.
+   * Otherwise, pull it from the Queue-it Go platform (every 5 minutes).
+   *
+   * @param int $ttl
+   *   Maximum time to cache config in seconds.
+   *   Default is 5 minutes (300 seconds).
+   * @param bool $json
+   *   Sets config format. By default in JSON format.
+   *   Otherwise as an array.
+   *
+   * @return string|array
+   *   Returns config, in JSON format by default.
+   *   If $json is set to FALSE, return in an array format.
    */
-  public function getIntegrationConfig() {
+  public function getIntegrationConfig($ttl = 300, $json = TRUE) {
     // Ignore fetching on invalid configuration.
     if (!$this->validateConfig()) {
-      return NULL;
+      return FALSE;
     }
-
-    // Get the auto-generated config file published on Queue-it Go platform.
-    // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
-    // @todo: Consider caching the config to minimalize external requests.
-    return file_get_contents($this->getIntegrationConfigPath());
+    $last_pull = variable_get('queueit_last_pull', 0);
+    if (REQUEST_TIME - $last_pull > $ttl) {
+      // Get the auto-generated config file published on Queue-it Go platform.
+      // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
+      // @todo: Consider caching the config to minimalize external requests.
+      $config_json = file_get_contents($this->getIntegrationConfigUrl());
+      // Convert plain JSON to array.
+      $config_arr = json_decode($config_json, TRUE);
+      if (!empty($config_arr)) {
+        variable_set('queueit_config', $config_arr);
+        variable_set('queueit_last_pull', REQUEST_TIME);
+      }
+    }
+    else {
+      $config_arr = variable_get('queueit_config', []);
+      $config_json = json_encode($config_arr);
+    }
+    return $json ? $config_json : $config_arr;
   }
 
+  /**
+   * Get the datetime of the last integration config update.
+   *
+   * @return int
+   *   Returns timestamp of the last integration config pull.
+   */
+  public function getIntegrationConfigTimestamp() {
+    return variable_get('queueit_last_pull', 0);
+  }
 
 }
