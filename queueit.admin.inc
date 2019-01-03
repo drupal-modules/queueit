@@ -40,6 +40,7 @@ function queueit_settings_form($form, &$form_state) {
   /* Integration mode */
   $form['integration_config'] = [
     '#title' => t('Integration settings'),
+    '#description' => t('Integration configuration uses integration config which is hosted on Queue-it configuration store. The configuration consist information necessary for page protection such as Triggers and Actions and which queues to use.'),
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
     '#collapsed' => variable_get('queueit_mode', 'integration') <> 'integration',
@@ -54,13 +55,14 @@ function queueit_settings_form($form, &$form_state) {
     '#prefix' => t('Current configuration:'),
     '#markup' => '<pre>' . $known_user->getIntegrationConfig() . '</pre>',
   ];
-  /* @todo: Add submit callback.
   $form['integration_config']['refresh'] = [
-    '#type' => 'button',
+    '#type' => 'submit',
     '#value' => t('Refresh'),
-    '#suffix' => sprintf(t('Last update: %s'), strftime("%c", $known_user->getIntegrationConfigTimestamp())),
+    '#executes_submit_callback' => FALSE,
+    '#suffix' => sprintf(t('Last update: %s<br>'), strftime("%c", $known_user->getIntegrationConfigTimestamp()))
+    . sprintf(t('Endpoint: <a href="%s">%s</a><br>'), $known_user->getIntegrationConfigUrl(), $known_user->getIntegrationConfigUrl())
+    . t("<br>Use <i>Refresh</i> button to re-pull the integration config from Queue-it (it refreshes the cached version). Note: it won't work if used more often than 5 seconds to avoid IP ban."),
   ];
-  */
   /* Configuration using code */
   $form['event_config'] = [
     '#title' => 'Event config',
@@ -258,7 +260,13 @@ function queueit_settings_form_validate($form, &$form_state) {
   }
 
   if (!empty($result) && $result) {
-    drupal_set_message(t('Configuration successfully validated.'), 'status');
+    $op = $form_state['triggering_element']['#value'];
+    if ($op == 'Refresh' && $known_user->getIntegrationConfig(5)) {
+      drupal_set_message(t('Configuration successfully refreshed.'), 'status');
+    }
+    else {
+      drupal_set_message(t('Configuration successfully validated.'), 'status');
+    }
   }
   else {
     drupal_set_message(t('Configuration not valid. Please verify your configuration.'), 'warning');
