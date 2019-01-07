@@ -207,6 +207,8 @@ class QueueitKnownUser extends QueueitBase {
       return FALSE;
     }
     $last_pull = variable_get('queueit_last_pull', 0);
+    $config_arr = variable_get('queueit_config', []);
+    $config_json = json_encode($config_arr);
     if (REQUEST_TIME - $last_pull > $ttl) {
       // Get the auto-generated config file published on Queue-it Go platform.
       // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
@@ -218,10 +220,6 @@ class QueueitKnownUser extends QueueitBase {
         variable_set('queueit_config', $config_arr);
         variable_set('queueit_last_pull', REQUEST_TIME);
       }
-    }
-    else {
-      $config_arr = variable_get('queueit_config', []);
-      $config_json = json_encode($config_arr);
     }
     return $json ? $config_json : $config_arr;
   }
