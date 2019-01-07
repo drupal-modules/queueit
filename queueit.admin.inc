@@ -13,7 +13,7 @@ function queueit_settings_form($form, &$form_state) {
 
   /* Main configuration */
   $form['config'] = [
-    '#title' => 'Queue-it Configuration',
+    '#title' => 'Queue-it configuration',
     '#type' => 'fieldset',
   ];
   // Implementation type.
@@ -22,7 +22,7 @@ function queueit_settings_form($form, &$form_state) {
   // * Code - Specify the configuration in code without using the Trigger/Action paradigm.
   $form['config']['queueit_mode'] = [
     '#type' => 'radios',
-    '#title' => t('Queue-it mode.'),
+    '#title' => t('Queue-it mode'),
     '#options' => [
       'integration' => 'Integration config',
       'js' => 'JavaScript',
@@ -40,7 +40,7 @@ function queueit_settings_form($form, &$form_state) {
   /* Integration mode */
   $form['integration_config'] = [
     '#title' => t('Integration settings'),
-    '#description' => t('Integration configuration uses integration config which is hosted on Queue-it configuration store. The configuration consist information necessary for page protection such as Triggers and Actions and which queues to use.'),
+    '#description' => t("Settings related to <i>Integration config</i> mode as defined in Queue-it configuration store and controlled via the Queue-it Go platform. The configuration file consists of Triggers and Actions to determine which pages to protect and which queues to use."),
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
     '#collapsed' => variable_get('queueit_mode', 'integration') <> 'integration',
@@ -61,7 +61,7 @@ function queueit_settings_form($form, &$form_state) {
     '#executes_submit_callback' => FALSE,
     '#suffix' => sprintf(t('Last update: %s<br>'), strftime("%c", $known_user->getIntegrationConfigTimestamp()))
     . sprintf(t('Endpoint: <a href="%s">%s</a><br>'), $known_user->getIntegrationConfigUrl(), $known_user->getIntegrationConfigUrl())
-    . t("<br>Use <i>Refresh</i> button to re-pull the integration config from Queue-it (it refreshes the cached version). Note: it won't work if used more often than 5 seconds to avoid IP ban."),
+    . t("<br>Use <i>Refresh</i> button to fetch the latest integration config from Queue-it Go platform. The config is cached with a TTL of 5 mins, after which the new config is loaded on any page load. Clicking the <i>Refresh</i> button more than once every 5 seconds will not trigger another fetch."),
   ];
   /* Configuration using code */
   $form['event_config'] = [

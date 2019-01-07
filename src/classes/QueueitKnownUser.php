@@ -212,7 +212,6 @@ class QueueitKnownUser extends QueueitBase {
     if (REQUEST_TIME - $last_pull > $ttl) {
       // Get the auto-generated config file published on Queue-it Go platform.
       // URL: https://[your-customer-id].queue-it.net/status/integrationconfig/[your-customer-id]
-      // @todo: Consider caching the config to minimalize external requests.
       $config_json = file_get_contents($this->getIntegrationConfigUrl());
       // Convert plain JSON to array.
       $config_arr = json_decode($config_json, TRUE);
